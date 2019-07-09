@@ -5,12 +5,29 @@ int RECV_PIN = 31;
 IRrecv irrecv(RECV_PIN); 
 decode_results results; 
 LiquidCrystal lcd(30,36,42,44,45,43); 
+
+//Feuchtigkeitssensor
+#include "DHT.h" 
+#define DHTPIN 2     // what digital pin we're connected to 
+#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321 
+ 
+// Connect pin 1 (on the left) of the sensor to +5V 
+// NOTE: If using a board with 3.3V logic like an Arduino Due connect pin 1 
+// to 3.3V instead of 5V! 
+// Connect pin 2 of the sensor to whatever your DHTPIN is 
+// Connect pin 4 (on the right) of the sensor to GROUND 
+// Connect a 10K resistor from pin 2 (data) to pin 1 (power) of the sensor 
+ 
+ 
+DHT dht(DHTPIN, DHTTYPE); 
+
  
 void setup()  
 { 
   Serial.begin(9600); 
   lcd.begin(16,2); 
   irrecv.enableIRIn();                                    //Reciever starten 
+  dht.begin();                                            //Feuchtigkeitssensor starten
   
  
 } 
@@ -157,8 +174,21 @@ void loop()
        
         while(results.value != 16761405)                  //Schleife des Programms bis zu manuellen Beendigung mit der "Play"-Taste 
           { 
-            lcd.setCursor(0,0); 
-            lcd.print("Kampfstachel");                       //Programmplatzhalter 
+          delay(2000);                                    //Messintervall 
+          
+          float h = dht.readHumidity();                   //Liest die Luftfeuchtigkeit aus und speichert sie in der Variable h ab  
+          
+             
+          if (isnan(h))                                    // Checkt ob irgendwelche Fehler beim auslesen des Sensor gibt  und bricht das Programm früher ab
+          { 
+            Serial.println("Fehler beim auslesen des Sensors!"); 
+            return; 
+          } 
+          
+          Serial.print("Luftfeuchtigkeit: "); 
+          Serial.print(h); 
+          Serial.print(" %\t"); 
+
                
               if (irrecv.decode(&results))  
                 { 
