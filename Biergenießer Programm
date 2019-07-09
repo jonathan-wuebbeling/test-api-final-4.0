@@ -203,7 +203,7 @@ void loop()
           Serial.print(h); 
           Serial.print(" %\t"); 
 
-          if(h>=40 and h<60) 
+          if(h>=40 and h<60)      //LED wird einmal aktiviert aber nie deaktiviert BUG2
           {
             analogWrite(GRUEN,255);
           
