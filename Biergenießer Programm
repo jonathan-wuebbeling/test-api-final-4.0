@@ -80,6 +80,8 @@ void setup()
   rtc.setTime(15, 15, 0);     //Uhrzeit einstellen
   rtc.setDate(21, 6, 2019);     //Datum einstellen
  */ 
+
+ Minute=0;
  
 } 
  
@@ -229,15 +231,19 @@ void loop()
           
           float h = dht.readHumidity();                   //Liest die Luftfeuchtigkeit aus und speichert sie in der Variable h ab  
 
-          myFile = SD.open("Messwert.txt", FILE_WRITE);  //Abspeichern der Messwerte
-          if (myFile) 
-          {  
-          myFile.print(rtc.getTimeStr());       //Zeitstempel
-          myFile.print(",");       
-          myFile.print("Luftfeuchtigkeit: ");
-          myFile.print(h);
-          myFile.println("%");
-          myFile.close(); // close the file
+          if(minute() == (Minute+10 %60)  )               // Zeitintervall zum Abspeichern in diesem Fall alle 10 Minuten    
+          {
+            Minute = minute();
+            myFile = SD.open("Messwert.txt", FILE_WRITE);  //Abspeichern der Messwerte
+            if (myFile) 
+            {  
+            myFile.print(rtc.getTimeStr());       //Zeitstempel
+            myFile.print(",");       
+            myFile.print("Luftfeuchtigkeit: ");
+            myFile.print(h);
+            myFile.println("%");
+            myFile.close(); // close the file
+            }
           }
           
              
