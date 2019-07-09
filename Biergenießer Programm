@@ -203,18 +203,18 @@ void loop()
           Serial.print(h); 
           Serial.print(" %\t"); 
 
-          if(h>=40 and h>60) 
+          if(h>=40 and h<60) 
           {
             analogWrite(GRUEN,255);
           
           }
 
-          if(h>=60 and h>80)
+          if(h>=60 and h<80)
           {
             analogWrite(GELB,255);
           }
 
-          if(h<=80 )
+          if(h>=80 )
           {
             analogWrite(ROT,255);
             
