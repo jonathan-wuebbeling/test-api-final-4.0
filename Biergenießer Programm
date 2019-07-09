@@ -184,6 +184,12 @@ void loop()
             Serial.println("Fehler beim auslesen des Sensors!"); 
             return; 
           } 
+
+          lcd.setCursor(0, 0);                            //Startposition der Darstellung auf dem LCD festlegen. lcd.setCursor(0,0) bedeutet: Erstes Zeichen in der ersten Zeile. 
+          lcd.print("Luftfeuchtigkeit:");  
+          lcd.setCursor(0, 1);                            // lcd.setCursor(0,1) bedeutet: Erstes Zeichen in der zweiten Zeile. 
+          lcd.print(h);
+          lcd.print("%"); 
           
           Serial.print("Luftfeuchtigkeit: "); 
           Serial.print(h); 
