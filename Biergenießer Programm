@@ -49,6 +49,10 @@ int pinCS = 53; // Pin 10 on Arduino Uno
 
 int Minute;
 
+bool LED_Gruen(float);              //Ausgelagerte Grenzen für die Ansteurung der LEDS
+bool LED_Gelb(float);
+bool LED_Rot(float);
+
  
 void setup()  
 { 
@@ -263,25 +267,33 @@ void loop()
           Serial.print(h); 
           Serial.print(" %\t"); 
 
-          if(h>=40 and h<60)      
+          if(LED_Gruen(h)==1)      
           {
             analogWrite(GRUEN,255);
-          
           }
-          else{analogWrite(GRUEN,0);}
+          if(LED_Gruen(h)==0)   
+          {
+            analogWrite(GRUEN,0);
+          }
 
-          if(h>=60 and h<80)
+          if(LED_Gelb(h)==1)
           {
             analogWrite(GELB,255);
           }
-          else{analogWrite(GELB,0);}
+          if(LED_Gelb(h)==0)
+          {
+            analogWrite(GELB,0);
+          }
 
-          if(h>=80 )
+          if(LED_Rot(h)==1)
           {
             analogWrite(ROT,255);
             
           }
-          else{analogWrite(ROT,0);}
+          if(LED_Rot(h)==0)
+          {
+            analogWrite(ROT,0);
+          }
 
                
               if (irrecv.decode(&results))  
@@ -345,3 +357,34 @@ void loop()
   } 
   
 }
+
+//Ausgelagerte Funktionen für die Ansteurung der LED(Wertebereich)
+bool LED_Gruen(float h)
+{
+  if(h>40 and h<60)
+  {
+    return 1;
+  }
+  else{return 0;}
+  
+}
+
+bool LED_Gelb(float h)
+{
+  if(h>=60 and h<80)
+  {
+    return 1;
+  }
+  else{return 0;}
+}
+
+bool LED_Rot(float h)
+{
+  if(h>=80)
+  {
+    return 1;
+  }
+  else{return 0;}
+}
+
+
