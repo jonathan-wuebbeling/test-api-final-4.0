@@ -8,6 +8,7 @@ LiquidCrystal lcd(30,36,42,44,45,43);
 
 //Feuchtigkeitssensor
 #include "DHT.h" 
+#include <DHT.h>
 #define DHTPIN 2     // what digital pin we're connected to 
 #define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321 
  
@@ -37,11 +38,16 @@ int pinCS = 53; // Pin 10 on Arduino Uno
 //CS=53
 
 //Bibliothek für Die Uhr
-#include <DS3231.h>
-DS3231  rtc(SDA, SCL);
+//#include <DS3231.h> veraltet Bibliothek
+#include <DS1307RTC.h>
+#include <Time.h>
+#include <TimeLib.h>
+//DS3231  rtc(SDA, SCL) veraltet
 //PIN Belegung DS3231 Modul:
 //SDA= PIN 20
 //SCL= PIN 21
+
+int Minute;
 
  
 void setup()  
@@ -66,11 +72,14 @@ void setup()
     return;
   }
 
-  rtc.begin();               //Zeit starten
+  setSyncProvider(RTC.get);
+  setTime(12,59,00,25,06,2019);                           //Zeit einstellen
+
+  /*rtc.begin();               //Zeit starten             //Zeit einstellungen veraltet
   rtc.setDOW(SATURDAY);     //Wochentag einstellen
   rtc.setTime(15, 15, 0);     //Uhrzeit einstellen
   rtc.setDate(21, 6, 2019);     //Datum einstellen
-  
+ */ 
  
 } 
  
