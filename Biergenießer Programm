@@ -36,6 +36,13 @@ int pinCS = 53; // Pin 10 on Arduino Uno
 //SCK=52
 //CS=53
 
+//Bibliothek für Die Uhr
+#include <DS3231.h>
+DS3231  rtc(SDA, SCL);
+//PIN Belegung DS3231 Modul:
+//SDA= PIN 20
+//SCL= PIN 21
+
  
 void setup()  
 { 
@@ -58,6 +65,11 @@ void setup()
     Serial.println("SD card initialization failed");
     return;
   }
+
+  rtc.begin();               //Zeit starten
+  rtc.setDOW(SATURDAY);     //Wochentag einstellen
+  rtc.setTime(15, 15, 0);     //Uhrzeit einstellen
+  rtc.setDate(21, 6, 2019);     //Datum einstellen
   
  
 } 
@@ -204,13 +216,15 @@ void loop()
        
         while(results.value != 16761405)                  //Schleife des Programms bis zu manuellen Beendigung mit der "Play"-Taste 
           { 
-          delay(2000);                                    //Messintervall 
+          
           
           float h = dht.readHumidity();                   //Liest die Luftfeuchtigkeit aus und speichert sie in der Variable h ab  
 
           myFile = SD.open("Messwert.txt", FILE_WRITE);  //Abspeichern der Messwerte
           if (myFile) 
-          {      
+          {  
+          myFile.print(rtc.getTimeStr());       //Zeitstempel
+          myFile.print(",");       
           myFile.print("Luftfeuchtigkeit: ");
           myFile.print(h);
           myFile.println("%");
