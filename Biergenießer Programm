@@ -1,0 +1,110 @@
+//Starten des IR_Reciver und den Code der Fernbedienung zu DEC-Zahlen codieren 
+#include <LiquidCrystal.h> 
+#include <IRremote.h> 
+ 
+int RECV_PIN = 31; 
+IRrecv irrecv(RECV_PIN); 
+decode_results results; 
+LiquidCrystal lcd(30,36,42,44,45,43); 
+ 
+void setup() 
+{ 
+  Serial.begin(9600); 
+  lcd.begin(16,2); 
+  irrecv.enableIRIn(); // Reciever starten 
+} 
+ 
+void loop() { 
+  
+  double eingabe = results.value; // Wert der IR fernbedinung  
+ 
+do{ 
+if (eingabe == 16738455) //Bsp um in das Hauptmenü zu kommen 
+{ lcd.clear(); 
+  lcd.setCursor(0,0);         //Erste Zeile 
+  lcd.print("Menuauswahl: "); 
+  lcd.setCursor(0,1);         //Zweite Zeile 
+  lcd.print("1.Thore, 2.Laura"); 
+  delay (2000);               //2 Sekunden warten 
+  lcd.clear();                //Display löschen 
+ 
+  lcd.setCursor(0,0);         //Erste Zeile 
+  lcd.print("Menuauswahl: "); 
+  lcd.setCursor(0,1);         //Zweite Zeile 
+  lcd.print("3.Jona, 4.Lukas"); 
+  delay (2000);               //2 Sekunden warten 
+  lcd.clear();                //Display löschen 
+ 
+  lcd.setCursor(0,0);         //Erste Zeile 
+  lcd.print("Menuauswahl: "); 
+  lcd.setCursor(0,1);         //Zweite Zeile 
+  lcd.print("6.Dominik"); 
+  delay (2000);               //2 Sekunden warten 
+  lcd.clear();}                //Display löschen 
+   
+if(eingabe==16724175) 
+{lcd.clear(); 
+ lcd.setCursor(0,0); 
+ lcd.print("Thores Pro"); 
+ delay(2000); 
+ lcd.clear();  
+  //Thores Quelltext 
+} 
+ 
+if(eingabe==16718055) 
+{lcd.clear(); 
+ lcd.setCursor(0,0); 
+ lcd.print("Prinzessin"); 
+ delay(2000); 
+ lcd.clear();  
+  //Lauras Quelltext 
+} 
+ 
+ 
+if (eingabe==16743045) 
+{lcd.clear(); 
+ lcd.setCursor(0,0); 
+ lcd.print("Engel <3"); 
+ delay(2000); 
+ lcd.clear();  
+  //Jonathans Quelltext 
+} 
+ 
+ 
+if(eingabe==16716015) 
+{lcd.clear(); 
+ lcd.setCursor(0,0); 
+ lcd.print("Kampfstachel"); 
+ delay(2000); 
+ lcd.clear();  
+  //Lukas Quelltext 
+} 
+ 
+ 
+if(eingabe==16726215) 
+{lcd.clear(); 
+ lcd.setCursor(0,0); 
+ lcd.print("Dominique"); 
+ delay(2000); 
+ lcd.clear();  
+  //Dominik Quelltext 
+} 
+if(eingabe==16734885) 
+{lcd.clear(); 
+ lcd.setCursor(0,0); 
+ lcd.print("Nicht definiert"); 
+ delay(2000); 
+ lcd.clear();  
+}  //Dominik Quelltext  
+else { 
+  do { 
+   lcd.setCursor(0,0); 
+   lcd.print("Eingabe bitte"); 
+   if (irrecv.decode(&results)) { 
+   Serial.println(results.value, DEC); //Ausgabe des Wertes als DEC-Zahl 
+   irrecv.resume(); // Den nächsten Wert emfangen 
+  } 
+  }while(results.value == 16761405); 
+} 
+}while (eingabe == 16761405); 
+}
