@@ -4,7 +4,15 @@
 int RECV_PIN = 31; 
 IRrecv irrecv(RECV_PIN); 
 decode_results results; 
-LiquidCrystal lcd(30,36,42,44,45,43); 
+LiquidCrystal lcd(30,36,42,44,45,43);
+
+// Variablen zur Temperaturmessung
+
+
+int sensor = A4;                    // Sensor ist am analogen Pin A4 angeschlossen.
+int sensorwert;
+int temperatur = 0;              // Speicherung des Temperaturwertes unter der Variablen "temperatur".
+int t = 1000;                         // Intervall „t“ in Millisekunden zwischen den einzelnen Messungen.
  
 void setup()  
 { 
@@ -103,8 +111,11 @@ void loop()
        
         while(results.value != 16761405)                  //Schleife des Programms bis zu manuellen Beendigung mit der "Play"-Taste 
           { 
-            lcd.setCursor(0,0); 
-            lcd.print("Prinzessin");                      //Programmplatzhalter 
+              sensorwert = analogRead(sensor);                               // Auslesen des Sensorwertes.
+              temperatur= map(sensorwert, 0, 410, -50, 150);          // Umwandeln des Sensorwertes in die Temperatur. Dazu: 0 = -50°C, 410 = 150°C
+              delay(t);                                               
+              Serial.print(temperatur);                                               // Der Wert „temperatur“ wird über die serielle Kommunikation an den PC gesendet.
+              Serial.println(" Grad Celsius");                                      // Im seriellen Monitor wird hinter der Temperatur die Einheit eingeblendet.
              
               if (irrecv.decode(&results)) 
                 { 
