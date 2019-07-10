@@ -113,10 +113,40 @@ void loop()
           { 
               sensorwert = analogRead(sensor);                               // Auslesen des Sensorwertes.
               temperatur= map(sensorwert, 0, 410, -50, 150);          // Umwandeln des Sensorwertes in die Temperatur. Dazu: 0 = -50°C, 410 = 150°C
-              delay(t);                                               
+              delay(t);
+              lcd.clear();                                                                     // Löschen des Displays.                                               
               Serial.print(temperatur);                                               // Der Wert „temperatur“ wird über die serielle Kommunikation an den PC gesendet.
               Serial.println(" Grad Celsius");                                      // Im seriellen Monitor wird hinter der Temperatur die Einheit eingeblendet.
-             
+              lcd.setCursor(0, 0);
+              lcd.print(int(temperatur));                                            // Ausgabe der Temperatur auf dem Display.
+              lcd.print((char)167);                                                     // Ausgabe des "°"-Zeichens.
+              lcd.print("C");
+              lcd.setCursor(0, 1);
+
+              if (temperatur <= -1) {                                                 // Ausgabe von "sehr dick" auf dem Display, wenn die Temperatur kleiner/ gleich -1°C ist.
+              lcd.print("sehr dick"); 
+              }
+ 
+              else if (-1 < temperatur <= 9) {                                  // Ausgabe von "dick" auf dem Display, wenn die Temperatur zwischen -1°C und 9°C liegt.
+              lcd.print("dick");                                                          // (groeßer als -1°C und kleiner/ gleich 9°C)
+              }
+
+              else if (9 < temperatur <= 17) {                                // Ausgabe von "langer Uebergang" auf dem Display, wenn die Temperatur zwischen 9°C und 17°C liegt.
+              lcd.print("langer Uebergang");                                  // (groeßer als 9°C und kleiner/ gleich 17°C)
+              }
+
+              else if (17 < temperatur <= 23) {                              // Ausgabe von "kurzer Uebergang" auf dem Display, wenn die Temperatur zwischen 17°C und 23°C liegt.
+              lcd.print("kurzer Uebergang");                                  // (groeßer als 17°C und kleiner/ gleich 23°C)
+              }
+
+              else if (23 < temperatur <= 32) {                             // Ausgabe von "kurz" auf dem Display, wenn die Temperatur zwischen 23°C und 32°C liegt.
+              lcd.print("kurz");                                                       // (groeßer als 23°C und kleiner/ gleich 32°C)
+              }
+
+              else {                                                                        // Ausgabe von "sehr kurz" auf dem Display, wenn die Temperatur groeßer als 32°C ist.
+              lcd.print("sehr kurz"); 
+              }
+
               if (irrecv.decode(&results)) 
                 { 
                   Serial.println(results.value, DEC);     //Ausgabe des Wertes als DEC-Zahl auf dem seriellen Monitor 
