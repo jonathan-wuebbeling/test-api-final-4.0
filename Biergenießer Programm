@@ -115,8 +115,6 @@ void loop()
               temperatur= map(sensorwert, 0, 410, -50, 150);          // Umwandeln des Sensorwertes in die Temperatur. Dazu: 0 = -50°C, 410 = 150°C
               delay(t);
               lcd.clear();                                                                     // Löschen des Displays.                                               
-              Serial.print(temperatur);                                               // Der Wert „temperatur“ wird über die serielle Kommunikation an den PC gesendet.
-              Serial.println(" Grad Celsius");                                      // Im seriellen Monitor wird hinter der Temperatur die Einheit eingeblendet.
               lcd.setCursor(0, 0);
               lcd.print(int(temperatur));                                            // Ausgabe der Temperatur auf dem Display.
               lcd.print((char)223);                                                     // Ausgabe des "°"-Zeichens.
