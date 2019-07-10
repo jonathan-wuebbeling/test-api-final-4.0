@@ -358,3 +358,68 @@ void loop()
   } 
   
 }
+
+
+void berechnung_sonnenaufgang()
+{
+if(c == 0 && g == 1)
+{ e=0;}
+if(c == 0 && g == 2)
+{ e=31;}
+if(c == 0 && g == 3)
+{ e=59;}
+if(c == 0 && g == 4)
+{ e=90;}
+if(c == 0 && g == 5)
+{ e=120;}
+if(c == 0 && g == 6)
+{ e=151;}
+if(c == 0 && g == 7)
+{ e=181;}
+if(c == 0 && g == 8)
+{ e=212;}
+if(c == 0 && g == 9)
+{ e=243;}
+if(c == 1 && g == 0)
+{ e=273;}
+if(c == 1 && g == 1)
+{ e=304;}
+if(c == 1 && g == 2)
+{ e=334;}
+
+f = a*10 + b;
+
+TagZahl = e + f;
+
+
+//Berechnung Uhrzeit Braunschweig liegt auf 10.53° Ost und 52.27° Nord
+
+//GeoB = pi * 52.27 / 180
+
+//Deklination der Sonne
+Dek = 0.4095*sin(0.016906*( TagZahl - 80.086));
+
+//Zeitdifferenz und wahre Ortszeit
+
+WOZ = 12 - (12*acos((sin(h)-sin(GeoB)*sin(Dek))/(cos(GeoB)*cos(Dek)))/pi);
+
+//MOZ
+
+MOZ = WOZ + 0.171*sin(0.0337*TagZahl+0.465)+ 0.1299*sin(0.01787*TagZahl-0.168);
+if(TagZahl >= 90 && TagZahl <= 300)
+{
+x = MOZ - 10.53/15 +2;
+}
+else
+x = MOZ - 10.53/15 +1;
+
+Std = x;
+Minu = (x - Std) * 60;
+
+Serial.println(Dek);
+Serial.println(WOZ);
+Serial.println(MOZ);
+Serial.println(x);
+Serial.println(Std);
+Serial.println(Minu);
+}
