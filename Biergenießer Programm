@@ -5,7 +5,26 @@ int RECV_PIN = 31;
 IRrecv irrecv(RECV_PIN); 
 decode_results results; 
 LiquidCrystal lcd(30,36,42,44,45,43); 
- 
+
+const float pi = 3.14;
+const float GeoB = 0.9122836;
+const float h = -0.0145;
+
+int a;
+int b;
+int c;
+int g;
+int e;
+int f;
+int TagZahl;
+int Std;
+int Minu;
+
+float WOZ;
+float MOZ;
+float Dek;
+float x;
+  
 void setup()  
 { 
   Serial.begin(9600); 
@@ -311,7 +330,30 @@ void loop()
                 lcd.print(".");
                 
               delay(5000);
+              
+              berechnung_sonnenaufgang();
 
+              lcd.clear();
+              lcd.setCursor(0,0);
+              lcd.print("Sonnenaufgang:");
+              lcd.setCursor(0,1);
+              lcd.print(Std);
+              lcd.print(" Std ");
+              lcd.print(Minu);
+              lcd.print(" Min ");
+              delay(5000);
+
+              berechnung_sonnenuntergang();
+
+              lcd.clear();
+              lcd.setCursor(0,0);
+              lcd.print("Sonnenuntergang:");
+              lcd.setCursor(0,1);
+              lcd.print(Std);
+              lcd.print(" Std ");
+              lcd.print(Minu);
+              lcd.print(" Min ");
+              delay(5000);
                
               if (irrecv.decode(&results))  
                 { 
