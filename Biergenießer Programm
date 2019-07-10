@@ -241,8 +241,8 @@ umdrehungen++;                                                                  
 void messung_windgeschwindigkeit()                                                                          // Funktion zu Messung der Windgeschwindigkeit
 {
 umdrehungen = 0;
-attachInterrupt(3, zaehlung_umdrehungen, RISING);                                                   // Diese Funktion bewirkt, dass die Umdrehung gezaehlt werden kann. Dabei ist der erste Parameter der angesteuerte Sensor (A3), der zweite Parameter die Funktion, die weiterverarbeitet wird und der dritte Parameter der Modus (Ansteuerung des zweiten Parameters, wenn der Pin von LOW auf HIGH wechselt).
-delay(t);
-detachInterrupt(3);                                                                                                       // Deaktivierung des Interrupts.
+attachInterrupt(digitalPinToInterrupt(3), zaehlung_umdrehungen, RISING);               // Diese Funktion bewirkt, dass die Umdrehung gezaehlt werden kann. Dabei ist der erste Parameter der angesteuerte Sensor (A3), der zweite Parameter die Funktion, die weiterverarbeitet wird und der dritte Parameter der Modus (Ansteuerung des zweiten Parameters, wenn der Pin von LOW auf HIGH wechselt).
+delayMicroseconds(t);
+detachInterrupt(digitalPinToInterrupt(3));                                                                    // Deaktivierung des Interrupts.
 windgeschwindigkeit = (int)umdrehungen * (float)pi * (float)d / (int)t * 3600;           // Formel zur Berechnung der Windgeschwindigkeit in der Einheit km/h.
 }
