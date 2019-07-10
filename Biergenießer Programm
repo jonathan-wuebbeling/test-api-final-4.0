@@ -4,7 +4,16 @@
 int RECV_PIN = 31; 
 IRrecv irrecv(RECV_PIN); 
 decode_results results; 
-LiquidCrystal lcd(30,36,42,44,45,43); 
+LiquidCrystal lcd(30,36,42,44,45,43);
+
+// Variablen zur Windgeschwindigkeitsmessung
+
+//int sensor = A3;                                          // Sensor ist am analogen Pin A3 angeschlossen.
+float windgeschwindigkeit = 0.0;                  // Speicherung der Windgeschwindigkeit unter der Variablen "windgeschwindigkeit".
+int t = 5000;                                                  // Messzeit „t“ in Millisekunden.
+int umdrehungen = 0;
+float pi = 3.1416;
+float d = 0.2;                                                // Durchmesser des verwendeten Windrads (Anemometer) d = 0,2 m.
  
 void setup()  
 { 
@@ -121,8 +130,9 @@ void loop()
        
         while(results.value != 16761405)                  //Schleife des Programms bis zu manuellen Beendigung mit der "Play"-Taste 
           { 
-            lcd.setCursor(0,0); 
-            lcd.print("Prinzessin2");                        //Programmplatzhalter 
+            messung_windgeschwindigkeit();                              // Aufrufen der Funktion zur Messung der Windgeschwindigkeit.
+            Serial.print(windgeschwindigkeit);                             // Der Wert „windgeschwindigkeit“ wird über die serielle Kommunikation an den PC gesendet.
+            Serial.print(" km/h");                                                  // Im seriellen Monitor wird hinter der Windgeschwindigkeit die Einheit eingeblendet.
              
                if (irrecv.decode(&results))  
                  { 
@@ -220,4 +230,19 @@ void loop()
     } 
   } 
   
+}
+
+void zaehlung_umdrehungen()                                                       // Funktion zum Zaehlen der Umdrehungen.
+{
+umdrehungen++;                                                                           // Hochzaehlen der Anzahl der Umdrehungen.
+}
+
+
+void messung_windgeschwindigkeit()                                                                          // Funktion zu Messung der Windgeschwindigkeit
+{
+umdrehungen = 0;
+attachInterrupt(3, zaehlung_umdrehungen, RISING);                                                   // Diese Funktion bewirkt, dass die Umdrehung gezaehlt werden kann. Dabei ist der erste Parameter der angesteuerte Sensor (A3), der zweite Parameter die Funktion, die weiterverarbeitet wird und der dritte Parameter der Modus (Ansteuerung des zweiten Parameters, wenn der Pin von LOW auf HIGH wechselt).
+delay(t);
+detachInterrupt(3);                                                                                                       // Deaktivierung des Interrupts.
+windgeschwindigkeit = (int)umdrehungen * (float)pi * (float)d / (int)t * 3600;           // Formel zur Berechnung der Windgeschwindigkeit in der Einheit km/h.
 }
