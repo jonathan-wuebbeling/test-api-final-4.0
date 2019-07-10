@@ -119,7 +119,7 @@ void loop()
               Serial.println(" Grad Celsius");                                      // Im seriellen Monitor wird hinter der Temperatur die Einheit eingeblendet.
               lcd.setCursor(0, 0);
               lcd.print(int(temperatur));                                            // Ausgabe der Temperatur auf dem Display.
-              lcd.print((char)167);                                                     // Ausgabe des "°"-Zeichens.
+              lcd.print((char)223);                                                     // Ausgabe des "°"-Zeichens.
               lcd.print("C");
               lcd.setCursor(0, 1);
 
