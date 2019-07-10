@@ -131,8 +131,12 @@ void loop()
         while(results.value != 16761405)                  //Schleife des Programms bis zu manuellen Beendigung mit der "Play"-Taste 
           { 
             messung_windgeschwindigkeit();                              // Aufrufen der Funktion zur Messung der Windgeschwindigkeit.
+            lcd.clear();                                                                  // Löschen des Displays.   
             Serial.print(windgeschwindigkeit);                             // Der Wert „windgeschwindigkeit“ wird über die serielle Kommunikation an den PC gesendet.
             Serial.print(" km/h");                                                  // Im seriellen Monitor wird hinter der Windgeschwindigkeit die Einheit eingeblendet.
+            lcd.setCursor(0, 0);
+            lcd.print(float(windgeschwindigkeit));                       // Ausgabe der Windgeschwindigkeit auf dem Display.
+            lcd.print(" km/h");                                                      // Hinter der Windgeschwindigkeit wird die Einheit "km/h" eingeblendet.
              
                if (irrecv.decode(&results))  
                  { 
