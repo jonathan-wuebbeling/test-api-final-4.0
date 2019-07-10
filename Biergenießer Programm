@@ -173,8 +173,145 @@ void loop()
        
         while(results.value != 16761405)                  //Schleife des Programms bis zu manuellen Beendigung mit der "Play"-Taste 
           { 
-            lcd.setCursor(0,0); 
-            lcd.print("Dominique");                       //Programmplatzhalter 
+            a = 10;
+            b = 10;
+            c = 10;
+            g = 10;
+  
+            Serial.println(a);
+            Serial.println(b);
+            Serial.println(c);
+            Serial.println(d);
+ 
+                  while(a == 10)
+                  { lcd.setCursor(0,0);
+                    lcd.print("Datum angeben");
+                    lcd.setCursor(0,1);
+                    lcd.print("Im Format XX.XX");
+                    
+                    if (irrecv.decode(&results)) {
+                    Serial.println(results.value, DEC); //Ausgabe des Wertes als DEC-Zahl
+                    irrecv.resume(); // Den nächsten Wert emfangen
+
+                    if (results.value == 16738455)
+                    {a = 0;}
+                    if (results.value == 16724175)
+                    { a = 1;}
+                    if (results.value == 16718055)
+                    { a = 2;}
+                    if (results.value == 16743045)
+                    { a = 3;}
+                      }
+                  }
+
+                  while(b == 10)
+                  { lcd.setCursor(0,0);
+                    lcd.print("Datum angeben");
+                    lcd.setCursor(0,1);
+                    lcd.print("Im Format ");
+                    lcd.print(a);
+                    lcd.print("X.XX");
+                    
+                    if (irrecv.decode(&results)) {
+                    Serial.println(results.value, DEC); //Ausgabe des Wertes als DEC-Zahl
+                    irrecv.resume(); // Den nächsten Wert emfangen
+                    
+                    if (results.value == 16738455)
+                    {b = 0;}
+                    if (results.value == 16724175)
+                    { b = 1;}
+                    if (results.value == 16718055)
+                    { b = 2;}
+                    if (results.value == 16743045)
+                    { b = 3;}
+                    if (results.value == 16716015)
+                    { b = 4;}
+                    if (results.value == 16726215)
+                    { b = 5;}
+                    if (results.value == 16734885)
+                    { b = 6;}
+                    if (results.value == 16728765)
+                    { b = 7;}
+                    if (results.value == 16730805)
+                    { b = 8;}
+                    if (results.value == 16732845)
+                    { b = 9;}
+                      }  
+                  }
+
+              while(c == 10)
+                  { lcd.setCursor(0,0);
+                    lcd.print("Datum angeben");
+                    lcd.setCursor(0,1);
+                    lcd.print("Im Format ");
+                    lcd.print(a);
+                    lcd.print(b);
+                    lcd.print(".XX");
+                    
+                    if (irrecv.decode(&results)) {
+                    Serial.println(results.value, DEC); //Ausgabe des Wertes als DEC-Zahl
+                    irrecv.resume(); // Den nächsten Wert emfangen
+
+                    if (results.value == 16738455)
+                    {c = 0;}
+                    if (results.value == 16724175)
+                    { c = 1;}
+                  
+                      }
+                  }
+
+              while(g == 10)
+                  { lcd.setCursor(0,0);
+                    lcd.print("Datum angeben");
+                    lcd.setCursor(0,1);
+                    lcd.print("Im Format ");
+                    lcd.print(a);
+                    lcd.print(b);
+                    lcd.print(".");
+                    lcd.print(c);
+                    lcd.print("X");
+                    
+                    if (irrecv.decode(&results)) {
+                    Serial.println(results.value, DEC); //Ausgabe des Wertes als DEC-Zahl
+                    irrecv.resume(); // Den nächsten Wert emfangen
+
+                    if (results.value == 16738455)
+                    {g = 0;}
+                    if (results.value == 16724175)
+                    { g = 1;}
+                    if (results.value == 16718055)
+                    { g = 2;}
+                    if (results.value == 16743045)
+                    { g = 3;}
+                    if (results.value == 16716015)
+                    { g = 4;}
+                    if (results.value == 16726215)
+                    { g = 5;}
+                    if (results.value == 16734885)
+                    { g = 6;}
+                    if (results.value == 16728765)
+                    { g = 7;}
+                    if (results.value == 16730805)
+                    { g = 8;}
+                    if (results.value == 16732845)
+                    { g = 9;}
+                      }
+                  }
+
+
+              lcd.clear();
+                
+                lcd.setCursor(0,0);
+                lcd.print("Datum: ");
+                lcd.print(a);
+                lcd.print(b);
+                lcd.print(".");
+                lcd.print(c);
+                lcd.print(g);
+                lcd.print(".");
+                
+              delay(5000);
+
                
               if (irrecv.decode(&results))  
                 { 
