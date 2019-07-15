@@ -157,43 +157,53 @@ int UVWert = 85; //auf 85 gesetzt um zu zeigen, dass ein wert auf dem Display zu
 //ab hier: Verarbeitung der Sensorwerte für den Photowiderstand
 // Unterteilung des Wertebereichs der Helligkeit in 5 Kategorien -> die Angaben von "--" bis "++" stehen hierbei für den erforderlichen Schutz, "--" Kein Schutz erforderlich, "++" Sehr hoher Schutz Erforderlich
 
-  if (sensorWert < 204 )//sehr dunkel
-  {
+//Funktionsaufruf der ausgelagerten Funktion
+int Helligkeits_Bereich = int fun_photoresistor(sensorWert); 
+
+switch (Helligkeits_Bereich) //Nachdem die Funktion fun_photoresistor ausgeführt wurde werden im switch-case die 5 Kategorien unterscheiden und der jeweilige Schutz für die Augen wird auf dem Display ausgegeben
+{
+case 1:
+{
     Serial.print("Augenschutz: -- ");    // zur Überprüfung, ausgabe auf dem PC
-    lcd.setCursor(0,0);                 //Eigendliche Ausgabe passiert hier -> auf LCD Display
-    lcd.print("Augenschutz: -- ");
-    delay (2000);
-    lcd.clear();
-  }
-
-  if (sensorWert >204 && sensorWert < 408)//etwas heller aber noch nahezu dunkel
-  {
+    // lcd.setCursor(0,0);                 //Eigendliche Ausgabe passiert hier -> auf LCD Display
+    //lcd.print("Augenschutz: -- ");
+    //delay (2000);
+    //lcd.clear();
+    break;
+}
+case 2:
+{
     Serial.print("Augenschutz: -  ");
-    lcd.setCursor(0,0);
-    lcd.print("Augenschutz: -  ");
-  }
-  
-  if (sensorWert > 408 && sensorWert < 612)//hell, vergleichbar mit im Schatten vorm Tentomax sitzend
-  {
+    //lcd.setCursor(0,0);
+    //lcd.print("Augenschutz: -  ");
+    break;
+}
+case 3:
+{
     Serial.print("Augenschutz: o  ");
-    lcd.setCursor(0,0);
-    lcd.print("Augenschutz: o  ");
-  }
-  
-  if (sensorWert > 612 && sensorWert < 816)//hell, direkte Sonneneinstrahlung
-  {
+    //lcd.setCursor(0,0);
+    //lcd.print("Augenschutz: o  ");
+    break;
+}    
+case 4:
+{
     Serial.print("Augenschutz: +  ");
-    lcd.setCursor(0,0);
-    lcd.print("Augenschutz: +  ");
-
-  }
-  
-  if (sensorWert > 816 )//sehr hell, direkte Sonneneinstrahlung
-  {
+    //lcd.setCursor(0,0);
+    //lcd.print("Augenschutz: +  ");
+    break;
+}
+case 5:
+{
     Serial.print("Augenschutz: ++ ");
-    lcd.setCursor(0,0);
-    lcd.print("Augenschutz: ++ ");
-  }
+    //lcd.setCursor(0,0);
+    //lcd.print("Augenschutz: ++ ");
+    break;
+}
+default:
+{
+    break; 
+}
+}
 
 //ab hier: Theoretische Sensorwerte für einen UV-Sensor einpflegen.
 // -> die Sensorwerte des UV-Sensors würden von 0 bis 240 gehen, wobei <10 für einen UV-Index von 0 steht und >240 für einen von 11
@@ -203,8 +213,8 @@ int UVWert = 85; //auf 85 gesetzt um zu zeigen, dass ein wert auf dem Display zu
  if (UVWert < 65)      // Wenn der Sensorwert kleiner als 65 ist...
   {
     Serial.print("Hautschutz: --  ");      // ... soll diese Meldung im seriellen Monitor erscheinen. Bedeutung: Kein Hautschtuz erforderlich.
-    lcd.setCursor(0,1);                  //Eigendliche Ausgabe passiert hier -> auf LCD Display
-    lcd.print("Hautschutz: --  "); 
+    //lcd.setCursor(0,1);                  //Eigendliche Ausgabe passiert hier -> auf LCD Display
+    //lcd.print("Hautschutz: --  "); 
   }
   
 
@@ -212,8 +222,8 @@ int UVWert = 85; //auf 85 gesetzt um zu zeigen, dass ein wert auf dem Display zu
   if (UVWert < 124 && UVWert > 65 )
   {
     Serial.print("Hautschutz: -   "); //Bedeutung: leichter Schutz erforderlich: z.B. Hut und leichte Sonnencreme.
-    lcd.setCursor(0,1);                 
-    lcd.print("Hautschutz: -   "); 
+   // lcd.setCursor(0,1);                 
+    //lcd.print("Hautschutz: -   "); 
   }
   
 
@@ -221,8 +231,8 @@ int UVWert = 85; //auf 85 gesetzt um zu zeigen, dass ein wert auf dem Display zu
   if (UVWert < 180 && UVWert > 124 )
   {
     Serial.print("Hautschutz: o   "); // Bedeutung: Schutz erforderlich : z.B. Hut, Sonnencreme & Schatten aufsuchen.
-    lcd.setCursor(0,1);                 
-    lcd.print("Hautschutz: o   "); 
+    //lcd.setCursor(0,1);                 
+    //lcd.print("Hautschutz: o   "); 
   }
   
 
@@ -230,17 +240,50 @@ int UVWert = 85; //auf 85 gesetzt um zu zeigen, dass ein wert auf dem Display zu
   if (UVWert < 221 && UVWert > 180 )
   {
     Serial.print("Hautschutz: +   "); //Bedeutung: Aufenthalt im Freien möglichst vermeiden. Wenn doch dann nur mit hohem Schutz.
-    lcd.setCursor(0,1);                 
-    lcd.print("Hautschutz: +   "); 
+    //lcd.setCursor(0,1);                 
+    //lcd.print("Hautschutz: +   "); 
   }
   
   //5. Katergorie: Index 11 und höher
   if (UVWert > 221 )
   {
     Serial.print("Hautschutz: ++  "); //Bedeutung: Aufenthalt im Freien vermeiden. Falls doch nur mit Hut, starker Sonnencreme und nicht länger als 2 Stunden
-    lcd.setCursor(0,1);                 
-    lcd.print("Hautschutz: ++  "); 
+    //lcd.setCursor(0,1);                 
+    //lcd.print("Hautschutz: ++  "); 
   }
+}
+
+int fun_photoresistor(int sensorWert) //Die Funktion unterteilt die Sensorwerte des Photowiderstandes (Eingabewert)in Kategorien von 1-5. Im Anschluss wird der Helligkeits_Bereich wieder zurück gegeben(Rückgabewert)
+{
+  if (sensorWert < 204 )//sehr dunkel
+  {
+    Helligkeits_Bereich=1;
+    return Helligkeits_Bereich;
+  }
+
+  if (sensorWert >204 && sensorWert < 408)//etwas heller aber noch nahezu dunkel
+  {
+    Helligkeits_Bereich=2;
+    return Helligkeits_Bereich;
+  }
+  
+  if (sensorWert > 408 && sensorWert < 612)//hell, vergleichbar mit im Schatten vorm Tentomax sitzend
+  {
+    Helligkeits_Bereich=3;
+    return Helligkeits_Bereich;
+  }
+  
+  if (sensorWert > 612 && sensorWert < 816)//hell, direkte Sonneneinstrahlung
+  {
+    Helligkeits_Bereich=4;
+    return Helligkeits_Bereich;
+  }
+  
+  if (sensorWert > 816 )//sehr hell, direkte Sonneneinstrahlung
+  {
+    Helligkeits_Bereich=5;
+    return Helligkeits_Bereich;
+  }  
       
              
               if (irrecv.decode(&results))  
