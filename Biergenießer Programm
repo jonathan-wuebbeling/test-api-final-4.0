@@ -150,41 +150,122 @@ sensorWert =analogRead(eingang); //Die Spannung an dem Fotowiderstand auslesen u
 Serial.print("   Sensorwert = " ); //Ausgabe am Serial-Monitor: Das Wort „Sensorwert: „
 Serial.println(sensorWert); //Ausgabe am Serial-Monitor. Mit dem Befehl Serial.print wird der Sensorwert des Fotowiderstandes in Form einer Zahl zwischen 0 und 1023 an den serial monitor gesendet.
 
-if (sensorWert > 512 ) //Wenn der Sensorwert über 512 beträgt….
-{
-digitalWrite(LED, HIGH); 
-}
+//Theoretischer Anschluss eines UV-Sensors
+int UVWert = 85; //auf 85 gesetzt um zu zeigen, dass ein wert auf dem Display zu sehen ist
+/*UVWert = analogRead(0); //Sensor wird an der Schnittstelle A0 ausgelesen
+Serial.print(UVWert); //zur kontrolle auf dem Seriellen Monitor ausgeben*/
 
-else 
-{
-digitalWrite(LED, LOW); 
-}
+//LED
+  if (sensorWert > 512 ) //Zusätzlicher Hinweis das Es Hell ist und man sich schützen sollte
+   {
+      digitalWrite(LED, HIGH); 
+   }
 
-delay (50);//Eine kurze Pause, in der die LED an oder aus ist
+  else 
+    {
+      digitalWrite(LED, LOW); 
+    }
+
+  delay (50);//Eine kurze Pause, in der die LED an oder aus ist
 
 //ab hier: Verarbeitung der Sensorwerte
-// Unterteilung des Wertebereichs der Helligkeit in 5 Kategorien
+// Unterteilung des Wertebereichs der Helligkeit in 5 Kategorien -> die Angaben von "--" bis "++" stehen hierbei für den erforderlichen Schutz, "--" Kein Schutz erforderlich, "++" Sehr hoher Schutz Erforderlich
 
-if (sensorWert < 204 )//sehr dunkel
+  if (sensorWert < 204 )//sehr dunkel
   {
-    Serial.print("Sonnenschutz: --");
+    Serial.print("Augenschutz: --");
   }
 
-if (sensorWert >204 && sensorWert < 408)//etwas heller aber noch nahezu dunkel
+  if (sensorWert >204 && sensorWert < 408)//etwas heller aber noch nahezu dunkel
   {
-    Serial.print("Sonnenschutz: -");
+    Serial.print("Augenschutz: -");
   }
-if (sensorWert > 408 && sensorWert < 612)//hell, vergleichbar mit im Schatten vorm Tentomax sitzend
+  if (sensorWert > 408 && sensorWert < 612)//hell, vergleichbar mit im Schatten vorm Tentomax sitzend
   {
-    Serial.print("Sonnenschutz: o");
+    Serial.print("Augenschutz: o");
   }
-if (sensorWert > 612 && sensorWert < 816)//hell, direkte Sonneneinstrahlung
+  if (sensorWert > 612 && sensorWert < 816)//hell, direkte Sonneneinstrahlung
   {
-    Serial.print("Sonnenschutz: +");
+    Serial.print("Augenschutz: +");
   }
-if (sensorWert > 816 )//sehr hell, direkte Sonneneinstrahlung
+  if (sensorWert > 816 )//sehr hell, direkte Sonneneinstrahlung
   {
-    Serial.print("Sonnenschutz: ++");
+    Serial.print("Augenschutz: ++");
+  }
+
+//ab hier: Theoretische Sensorwerte für einen UV-Sensor einpflegen.
+// -> die Sensorwerte des UV-Sensors würden von 0 bis 240 gehen, wobei <10 für einen UV-Index von 0 steht und >240 für einen von 11
+//Um dem Nutzer über den aktuell notwendigen Sonnenschutz zu Informieren werden die UV-Indexe von 0-11 wieder in 5 Kategorien eingeteilt
+
+ if (UVWert < 10 )      // Wenn der Sensorwert kleiner als 10 ist...
+  {
+    Serial.print("Index: 0");   // ... soll diese Meldung...
+    Serial.print("Kein Schutz erforderlich.");  // ... im seriellen Monitor erscheinen.
+  }
+  
+  if (UVWert < 46 && UVWert > 10 )  // Wenn der Sensorwert kleiner als 46 und größer als 10 ist...
+  {
+    Serial.print("Index: 1");    // ...soll diese Meldung...
+    Serial.print("Kein Schutz erforderlich.");  // ... im seriellen Monitor erscheinen.
+  }
+  
+  if (UVWert < 65 && UVWert > 46 )
+  {
+    Serial.print("Index: 2");
+    Serial.print("Kein Schutz erforderlich.");
+  }
+  
+  if (UVWert < 83 && UVWert > 65 )
+  {
+    Serial.print("Index: 3");
+    Serial.print("Schutz erforderlich : z.B. Hut, Sonnencreme");
+  }
+  
+  if (UVWert < 103 && UVWert > 83 )
+  {
+    Serial.print("Index: 4");
+    Serial.print("Schutz erforderlich : z.B. Hut, Sonnencreme");
+  }
+  
+  if (UVWert < 124 && UVWert > 103 )
+  {
+    Serial.print("Index: 5");
+    Serial.print("Schutz erforderlich : z.B. Hut, Sonnencreme");
+  }
+  if (UVWert < 142 && UVWert > 124 )
+  {
+    Serial.print("Index: 6");
+    Serial.print("Schutz erforderlich : z.B. Hut, Sonnencreme. Schatten aufsuchen.");
+  }
+  
+  if (UVWert < 162 && UVWert > 142 )
+  {
+    Serial.print("Index: 7");
+    Serial.print("Schutz erforderlich : z.B. Hut, Sonnencreme. Schatten aufsuchen.");
+  }
+  
+  if (UVWert < 180 && UVWert > 162 )
+  {
+    Serial.print("Index: 8");
+    Serial.print("Aufenthalt im Freien möglichst vermeiden. Schutz erforderlich.");
+  }
+  
+  if (UVWert < 200 && UVWert > 180 )
+  {
+    Serial.print("Index: 9");
+    Serial.print("Aufenthalt im Freien möglichst vermeiden. Schutz erforderlich.");
+  }
+  
+  if (UVWert < 221 && UVWert > 200 ) 
+  {
+    Serial.print("Index: 10");
+    Serial.print("Aufenthalt im Freien möglichst vermeiden. Schutz erforderlich.");
+  }
+
+  if (UVWert > 221 )
+  {
+    Serial.print("Index: 11");
+    Serial.print("Aufenthalt im Freien vermeiden. Schutz DRINGEND erforderlich.");
   }
       
              
