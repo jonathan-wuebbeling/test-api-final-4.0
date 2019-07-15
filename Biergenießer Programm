@@ -147,7 +147,7 @@ void loop()
 
 
 sensorWert =analogRead(eingang); //Die Spannung an dem Fotowiderstand auslesen und unter der Variable „sensorWert“ abspeichern.
-Serial.print("   Sensorwert = " ); //Ausgabe am Serial-Monitor: Das Wort „Sensorwert: „
+Serial.print("   Sensorwert = " ); //Ausgabe am Serial-Monitor: Das Wort „Sensorwert: „ Dient Lediglich der Überprüfung
 Serial.println(sensorWert); //Ausgabe am Serial-Monitor. Mit dem Befehl Serial.print wird der Sensorwert des Fotowiderstandes in Form einer Zahl zwischen 0 und 1023 an den serial monitor gesendet.
 
 //Theoretischer Anschluss eines UV-Sensors
@@ -197,75 +197,37 @@ Serial.print(UVWert); //zur kontrolle auf dem Seriellen Monitor ausgeben*/
 // -> die Sensorwerte des UV-Sensors würden von 0 bis 240 gehen, wobei <10 für einen UV-Index von 0 steht und >240 für einen von 11
 //Um dem Nutzer über den aktuell notwendigen Sonnenschutz zu Informieren werden die UV-Indexe von 0-11 wieder in 5 Kategorien eingeteilt
 
- if (UVWert < 10 )      // Wenn der Sensorwert kleiner als 10 ist...
+ //1. Katergorie: Index 0 bis 2
+ if (UVWert < 65)      // Wenn der Sensorwert kleiner als 65 ist...
   {
-    Serial.print("Index: 0");   // ... soll diese Meldung...
-    Serial.print("Kein Schutz erforderlich.");  // ... im seriellen Monitor erscheinen.
+    Serial.print("Hautschutz: --");   // ... soll diese Meldung im seriellen Monitor erscheinen. Bedeutung: Kein Hautschtuz erforderlich.
   }
   
-  if (UVWert < 46 && UVWert > 10 )  // Wenn der Sensorwert kleiner als 46 und größer als 10 ist...
-  {
-    Serial.print("Index: 1");    // ...soll diese Meldung...
-    Serial.print("Kein Schutz erforderlich.");  // ... im seriellen Monitor erscheinen.
-  }
-  
-  if (UVWert < 65 && UVWert > 46 )
-  {
-    Serial.print("Index: 2");
-    Serial.print("Kein Schutz erforderlich.");
-  }
-  
-  if (UVWert < 83 && UVWert > 65 )
-  {
-    Serial.print("Index: 3");
-    Serial.print("Schutz erforderlich : z.B. Hut, Sonnencreme");
-  }
-  
-  if (UVWert < 103 && UVWert > 83 )
-  {
-    Serial.print("Index: 4");
-    Serial.print("Schutz erforderlich : z.B. Hut, Sonnencreme");
-  }
-  
-  if (UVWert < 124 && UVWert > 103 )
-  {
-    Serial.print("Index: 5");
-    Serial.print("Schutz erforderlich : z.B. Hut, Sonnencreme");
-  }
-  if (UVWert < 142 && UVWert > 124 )
-  {
-    Serial.print("Index: 6");
-    Serial.print("Schutz erforderlich : z.B. Hut, Sonnencreme. Schatten aufsuchen.");
-  }
-  
-  if (UVWert < 162 && UVWert > 142 )
-  {
-    Serial.print("Index: 7");
-    Serial.print("Schutz erforderlich : z.B. Hut, Sonnencreme. Schatten aufsuchen.");
-  }
-  
-  if (UVWert < 180 && UVWert > 162 )
-  {
-    Serial.print("Index: 8");
-    Serial.print("Aufenthalt im Freien möglichst vermeiden. Schutz erforderlich.");
-  }
-  
-  if (UVWert < 200 && UVWert > 180 )
-  {
-    Serial.print("Index: 9");
-    Serial.print("Aufenthalt im Freien möglichst vermeiden. Schutz erforderlich.");
-  }
-  
-  if (UVWert < 221 && UVWert > 200 ) 
-  {
-    Serial.print("Index: 10");
-    Serial.print("Aufenthalt im Freien möglichst vermeiden. Schutz erforderlich.");
-  }
 
+  //2. Katergorie: Index 3 bis 5
+  if (UVWert < 124 && UVWert > 65 )
+  {
+    Serial.print("Hautschutz: -"); //Bedeutung: leichter Schutz erforderlich: z.B. Hut und leichte Sonnencreme.
+  }
+  
+
+  //3. Katergorie: Index 6 bis 8
+  if (UVWert < 180 && UVWert > 124 )
+  {
+    Serial.print("Hautschutz: o"); // Bedeutung: Schutz erforderlich : z.B. Hut, Sonnencreme & Schatten aufsuchen.
+  }
+  
+
+  //4. Katergorie: Index 9 bis 10
+  if (UVWert < 221 && UVWert > 180 )
+  {
+    Serial.print("Hautschutz: +"); //Bedeutung: Aufenthalt im Freien möglichst vermeiden. Wenn doch dann nur mit hohem Schutz.
+  }
+  
+  //5. Katergorie: Index 11 und höher
   if (UVWert > 221 )
   {
-    Serial.print("Index: 11");
-    Serial.print("Aufenthalt im Freien vermeiden. Schutz DRINGEND erforderlich.");
+    Serial.print("Hautschutz: ++"); //Bedeutung: Aufenthalt im Freien vermeiden. Falls doch nur mit Hut, starker Sonnencreme und nicht länger als 2 Stunden
   }
       
              
