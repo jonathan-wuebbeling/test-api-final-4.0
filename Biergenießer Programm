@@ -162,9 +162,33 @@ digitalWrite(LED, LOW);
 }
 
 delay (50);//Eine kurze Pause, in der die LED an oder aus ist
-}
 
-             
+//ab hier: Verarbeitung der Sensorwerte
+// Unterteilung des Wertebereichs der Helligkeit in 5 Kategorien
+
+if (sensorWert < 204 )//sehr dunkel
+  {
+    Serial.print("Sonnenschutz: --");
+  }
+
+if (204 < sensorWert < 408)//etwas heller aber noch nahezu dunkel
+  {
+    Serial.print("Sonnenschutz: -");
+  }
+if (408 < sensorWert < 612)//hell, vergleichbar mit im Schatten vorm Tentomax sitzend
+  {
+    Serial.print("Sonnenschutz: o");
+  }
+if (612 < sensorWert < 816)//hell, direkte Sonneneinstrahlung
+  {
+    Serial.print("Sonnenschutz: +");
+  }
+if (sensorWert > 816 )//sehr hell, direkte Sonneneinstrahlung
+  {
+    Serial.print("Sonnenschutz: ++");
+  }
+  
+      
              
               if (irrecv.decode(&results))  
                 { 
