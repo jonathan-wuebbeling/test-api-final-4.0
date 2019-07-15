@@ -158,7 +158,7 @@ int UVWert = 85; //auf 85 gesetzt um zu zeigen, dass ein wert auf dem Display zu
 // Unterteilung des Wertebereichs der Helligkeit in 5 Kategorien -> die Angaben von "--" bis "++" stehen hierbei für den erforderlichen Schutz, "--" Kein Schutz erforderlich, "++" Sehr hoher Schutz Erforderlich
 
 //Funktionsaufruf der ausgelagerten Funktion
-int Helligkeits_Bereich = int fun_photoresistor(sensorWert); 
+Helligkeits_Bereich = fun_photoresistor(sensorWert); 
 
 switch (Helligkeits_Bereich) //Nachdem die Funktion fun_photoresistor ausgeführt wurde werden im switch-case die 5 Kategorien unterscheiden und der jeweilige Schutz für die Augen wird auf dem Display ausgegeben
 {
