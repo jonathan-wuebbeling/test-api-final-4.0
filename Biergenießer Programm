@@ -6,16 +6,14 @@ IRrecv irrecv(RECV_PIN);
 decode_results results; 
 LiquidCrystal lcd(30,36,42,44,45,43); 
 
-int eingang= A7;        //Das Wort „eingang“ steht jetzt für den Wert „A7“ (Bezeichnung vom Analogport 7)
-int LED = 7;                 //Das Wort „LED“ steht jetzt für den Wert 7
-int sensorWert = 0;    //Variable für den Sensorwert mit 0 als Startwert
+int eingang= A7; //Das Wort „eingang“ steht jetzt für den Wert „A7“ (Bezeichnung vom Analogport 7)
+int sensorWert = 0; //Variable für den Sensorwert mit 0 als Startwert
  
 void setup()  
 { 
   Serial.begin(9600); 
   lcd.begin(16,2); 
   irrecv.enableIRIn();                                    //Reciever starten 
-  pinMode (LED, OUTPUT);                         //Der Pin mit der LED (Pin 7) ist jetzt ein Ausgang
  
 } 
  
@@ -155,18 +153,6 @@ int UVWert = 85; //auf 85 gesetzt um zu zeigen, dass ein wert auf dem Display zu
 /*UVWert = analogRead(0); //Sensor wird an der Schnittstelle A0 ausgelesen
 Serial.print(UVWert); //zur kontrolle auf dem Seriellen Monitor ausgeben*/
 
-//LED
-  if (sensorWert > 512 ) //Zusätzlicher Hinweis das Es Hell ist und man sich schützen sollte
-   {
-      digitalWrite(LED, HIGH); 
-   }
-
-  else 
-    {
-      digitalWrite(LED, LOW); 
-    }
-
-  delay (50);//Eine kurze Pause, in der die LED an oder aus ist
 
 //ab hier: Verarbeitung der Sensorwerte
 // Unterteilung des Wertebereichs der Helligkeit in 5 Kategorien -> die Angaben von "--" bis "++" stehen hierbei für den erforderlichen Schutz, "--" Kein Schutz erforderlich, "++" Sehr hoher Schutz Erforderlich
