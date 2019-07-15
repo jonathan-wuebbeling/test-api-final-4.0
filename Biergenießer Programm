@@ -150,33 +150,49 @@ Serial.println(sensorWert); //Ausgabe am Serial-Monitor. Mit dem Befehl Serial.p
 
 //Theoretischer Anschluss eines UV-Sensors
 int UVWert = 85; //auf 85 gesetzt um zu zeigen, dass ein wert auf dem Display zu sehen ist
-/*UVWert = analogRead(0); //Sensor wird an der Schnittstelle A0 ausgelesen
-Serial.print(UVWert); //zur kontrolle auf dem Seriellen Monitor ausgeben*/
+//UVWert = analogRead(0); //Sensor wird an der Schnittstelle A0 ausgelesen
+//Serial.print(UVWert); //zur kontrolle auf dem Seriellen Monitor ausgeben
 
 
-//ab hier: Verarbeitung der Sensorwerte
+//ab hier: Verarbeitung der Sensorwerte für den Photowiderstand
 // Unterteilung des Wertebereichs der Helligkeit in 5 Kategorien -> die Angaben von "--" bis "++" stehen hierbei für den erforderlichen Schutz, "--" Kein Schutz erforderlich, "++" Sehr hoher Schutz Erforderlich
 
   if (sensorWert < 204 )//sehr dunkel
   {
-    Serial.print("Augenschutz: --");
+    Serial.print("Augenschutz: -- ");    // zur Überprüfung, ausgabe auf dem PC
+    lcd.setCursor(0,0);                 //Eigendliche Ausgabe passiert hier -> auf LCD Display
+    lcd.print("Augenschutz: -- ");
+    delay (2000);
+    lcd.clear();
   }
 
   if (sensorWert >204 && sensorWert < 408)//etwas heller aber noch nahezu dunkel
   {
-    Serial.print("Augenschutz: -");
+    Serial.print("Augenschutz: -  ");
+    lcd.setCursor(0,0);
+    lcd.print("Augenschutz: -  ");
   }
+  
   if (sensorWert > 408 && sensorWert < 612)//hell, vergleichbar mit im Schatten vorm Tentomax sitzend
   {
-    Serial.print("Augenschutz: o");
+    Serial.print("Augenschutz: o  ");
+    lcd.setCursor(0,0);
+    lcd.print("Augenschutz: o  ");
   }
+  
   if (sensorWert > 612 && sensorWert < 816)//hell, direkte Sonneneinstrahlung
   {
-    Serial.print("Augenschutz: +");
+    Serial.print("Augenschutz: +  ");
+    lcd.setCursor(0,0);
+    lcd.print("Augenschutz: +  ");
+
   }
+  
   if (sensorWert > 816 )//sehr hell, direkte Sonneneinstrahlung
   {
-    Serial.print("Augenschutz: ++");
+    Serial.print("Augenschutz: ++ ");
+    lcd.setCursor(0,0);
+    lcd.print("Augenschutz: ++ ");
   }
 
 //ab hier: Theoretische Sensorwerte für einen UV-Sensor einpflegen.
@@ -186,34 +202,44 @@ Serial.print(UVWert); //zur kontrolle auf dem Seriellen Monitor ausgeben*/
  //1. Katergorie: Index 0 bis 2
  if (UVWert < 65)      // Wenn der Sensorwert kleiner als 65 ist...
   {
-    Serial.print("Hautschutz: --");   // ... soll diese Meldung im seriellen Monitor erscheinen. Bedeutung: Kein Hautschtuz erforderlich.
+    Serial.print("Hautschutz: --  ");      // ... soll diese Meldung im seriellen Monitor erscheinen. Bedeutung: Kein Hautschtuz erforderlich.
+    lcd.setCursor(0,1);                  //Eigendliche Ausgabe passiert hier -> auf LCD Display
+    lcd.print("Hautschutz: --  "); 
   }
   
 
   //2. Katergorie: Index 3 bis 5
   if (UVWert < 124 && UVWert > 65 )
   {
-    Serial.print("Hautschutz: -"); //Bedeutung: leichter Schutz erforderlich: z.B. Hut und leichte Sonnencreme.
+    Serial.print("Hautschutz: -   "); //Bedeutung: leichter Schutz erforderlich: z.B. Hut und leichte Sonnencreme.
+    lcd.setCursor(0,1);                 
+    lcd.print("Hautschutz: -   "); 
   }
   
 
   //3. Katergorie: Index 6 bis 8
   if (UVWert < 180 && UVWert > 124 )
   {
-    Serial.print("Hautschutz: o"); // Bedeutung: Schutz erforderlich : z.B. Hut, Sonnencreme & Schatten aufsuchen.
+    Serial.print("Hautschutz: o   "); // Bedeutung: Schutz erforderlich : z.B. Hut, Sonnencreme & Schatten aufsuchen.
+    lcd.setCursor(0,1);                 
+    lcd.print("Hautschutz: o   "); 
   }
   
 
   //4. Katergorie: Index 9 bis 10
   if (UVWert < 221 && UVWert > 180 )
   {
-    Serial.print("Hautschutz: +"); //Bedeutung: Aufenthalt im Freien möglichst vermeiden. Wenn doch dann nur mit hohem Schutz.
+    Serial.print("Hautschutz: +   "); //Bedeutung: Aufenthalt im Freien möglichst vermeiden. Wenn doch dann nur mit hohem Schutz.
+    lcd.setCursor(0,1);                 
+    lcd.print("Hautschutz: +   "); 
   }
   
   //5. Katergorie: Index 11 und höher
   if (UVWert > 221 )
   {
-    Serial.print("Hautschutz: ++"); //Bedeutung: Aufenthalt im Freien vermeiden. Falls doch nur mit Hut, starker Sonnencreme und nicht länger als 2 Stunden
+    Serial.print("Hautschutz: ++  "); //Bedeutung: Aufenthalt im Freien vermeiden. Falls doch nur mit Hut, starker Sonnencreme und nicht länger als 2 Stunden
+    lcd.setCursor(0,1);                 
+    lcd.print("Hautschutz: ++  "); 
   }
       
              
