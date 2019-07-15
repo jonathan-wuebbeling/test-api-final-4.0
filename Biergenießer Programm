@@ -5,13 +5,19 @@ int RECV_PIN = 31;
 IRrecv irrecv(RECV_PIN); 
 decode_results results; 
 LiquidCrystal lcd(30,36,42,44,45,43); 
- 
+
+int eingang= A7; //Das Wort „eingang“ steht jetzt für den Wert „A7“ (Bezeichnung vom Analogport 7)
+int sensorWert = 0; //Variable für den Sensorwert mit 0 als Startwert
+int Helligkeits_Bereich = 0;  //wird im späteren Verlauf für die ausgelagerte Funktion benutzt
+int UV_Bereich = 0;           //wird im späteren Verlauf für die ausgelagerte Funktion benutzt
+int UVWert = 85; //auf 85 gesetzt um zu zeigen, dass ein wert auf dem Display zu sehen ist
+
+
 void setup()  
 { 
   Serial.begin(9600); 
   lcd.begin(16,2); 
   irrecv.enableIRIn();                                    //Reciever starten 
-  
  
 } 
  
@@ -139,9 +145,113 @@ void loop()
     
         while(results.value != 16761405)                  //Schleife des Programms bis zu manuellen Beendigung mit der "Play"-Taste 
           { 
-              lcd.setCursor(0,0); 
-              lcd.print("Engel <3");                        //Programmplatzhalter 
-             
+              {
+
+
+sensorWert =analogRead(eingang); //Die Spannung an dem Fotowiderstand auslesen und unter der Variable „sensorWert“ abspeichern.
+    Serial.print("   Sensorwert = " ); //Ausgabe am Serial-Monitor: Das Wort „Sensorwert: „ Dient Lediglich der Überprüfung
+    Serial.println(sensorWert); //Ausgabe am Serial-Monitor. Mit dem Befehl Serial.print wird der Sensorwert des Fotowiderstandes in Form einer Zahl zwischen 0 und 1023 an den serial monitor gesendet.
+
+//ab hier: Verarbeitung der Sensorwerte für den Photowiderstand
+// Unterteilung des Wertebereichs der Helligkeit in 5 Kategorien -> die Angaben von "--" bis "++" stehen hierbei für den erforderlichen Schutz, "--" Kein Schutz erforderlich, "++" Sehr hoher Schutz Erforderlich
+
+//Funktionsaufruf der ausgelagerten Funktion
+    Helligkeits_Bereich = fun_photoresistor(sensorWert); 
+
+switch (Helligkeits_Bereich) //Nachdem die Funktion fun_photoresistor ausgeführt wurde werden im switch-case die 5 Kategorien unterscheiden und der jeweilige Schutz für die Augen wird auf dem Display ausgegeben
+{
+  case 1:
+  {
+    Serial.print("Augenschutz: -- ");    // zur Überprüfung, ausgabe auf dem PC
+    // lcd.setCursor(0,0);                 //Eigendliche Ausgabe passiert hier -> auf LCD Display
+    //lcd.print("Augenschutz: -- ");
+    //delay (2000);
+    //lcd.clear();
+    break;
+  }
+  case 2:
+  {
+    Serial.print("Augenschutz: -  ");
+    //lcd.setCursor(0,0);
+    //lcd.print("Augenschutz: -  ");
+    break;
+  }
+  case 3:
+  {
+    Serial.print("Augenschutz: o  ");
+    //lcd.setCursor(0,0);
+    //lcd.print("Augenschutz: o  ");
+    break;
+  }    
+  case 4:
+  {
+    Serial.print("Augenschutz: +  ");
+    //lcd.setCursor(0,0);
+    //lcd.print("Augenschutz: +  ");
+    break;
+  }
+  case 5:
+  {
+    Serial.print("Augenschutz: ++ ");
+    //lcd.setCursor(0,0);
+    //lcd.print("Augenschutz: ++ ");
+    break;
+  }
+  default:
+  {
+    break; 
+  }
+}
+
+//ab hier: Theoretische Sensorwerte für einen UV-Sensor einpflegen.
+// -> die Sensorwerte des UV-Sensors würden von 0 bis 240 gehen, wobei <10 für einen UV-Index von 0 steht und >240 für einen von 11
+//Um dem Nutzer über den aktuell notwendigen Sonnenschutz zu Informieren werden die UV-Indexe von 0-11 wieder in 5 Kategorien eingeteilt
+
+UV_Bereich = fun_uv(UVWert); 
+
+switch (UV_Bereich)
+{
+  case 1:
+  {
+    Serial.print("Hautschutz: --  ");      // ... soll diese Meldung im seriellen Monitor erscheinen. Bedeutung: Kein Hautschtuz erforderlich.
+    //lcd.setCursor(0,1);                  //Eigendliche Ausgabe passiert hier -> auf LCD Display
+    //lcd.print("Hautschutz: --  "); 
+    break;
+  }
+  case 2:
+  {
+    Serial.print("Hautschutz: -   "); //Bedeutung: leichter Schutz erforderlich: z.B. Hut und leichte Sonnencreme.
+    // lcd.setCursor(0,1);                 
+    //lcd.print("Hautschutz: -   "); 
+    break;
+  }
+  case 3:
+  {
+     Serial.print("Hautschutz: o   "); // Bedeutung: Schutz erforderlich : z.B. Hut, Sonnencreme & Schatten aufsuchen.
+    //lcd.setCursor(0,1);                 
+    //lcd.print("Hautschutz: o   "); 
+    break;
+  }
+  case 4:
+  {
+     Serial.print("Hautschutz: +   "); //Bedeutung: Aufenthalt im Freien möglichst vermeiden. Wenn doch dann nur mit hohem Schutz.
+    //lcd.setCursor(0,1);                 
+    //lcd.print("Hautschutz: +   "); 
+    break;
+  }
+  case 5:
+  {
+     Serial.print("Hautschutz: ++  "); //Bedeutung: Aufenthalt im Freien vermeiden. Falls doch nur mit Hut, starker Sonnencreme und nicht länger als 2 Stunden
+    //lcd.setCursor(0,1);                 
+    //lcd.print("Hautschutz: ++  "); 
+    break;
+  }
+  default:
+  {
+    break; 
+  }
+}   //Schließt den switch case
+      
              
               if (irrecv.decode(&results))  
                 { 
@@ -220,4 +330,78 @@ void loop()
     } 
   } 
   
+}
+
+int fun_photoresistor(int sensorWert) //Die Funktion unterteilt die Sensorwerte des Photowiderstandes (Eingabewert)in Kategorien von 1-5. Im Anschluss wird der Helligkeits_Bereich wieder zurück gegeben(Rückgabewert)
+{
+  if (sensorWert < 204 )//sehr dunkel
+  {
+    Helligkeits_Bereich=1;
+    return Helligkeits_Bereich;
+  }
+
+  if (sensorWert >204 && sensorWert < 408)//etwas heller aber noch nahezu dunkel
+  {
+    Helligkeits_Bereich=2;
+    return Helligkeits_Bereich;
+  }
+  
+  if (sensorWert > 408 && sensorWert < 612)//hell, vergleichbar mit im Schatten vorm Tentomax sitzend
+  {
+    Helligkeits_Bereich=3;
+    return Helligkeits_Bereich;
+  }
+  
+  if (sensorWert > 612 && sensorWert < 816)//hell, direkte Sonneneinstrahlung
+  {
+    Helligkeits_Bereich=4;
+    return Helligkeits_Bereich;
+  }
+  
+  if (sensorWert > 816 )//sehr hell, direkte Sonneneinstrahlung
+  {
+    Helligkeits_Bereich=5;
+    return Helligkeits_Bereich;
+  }  
+}
+
+int fun_uv(int UVWert)
+{
+  //1. Katergorie: Index 0 bis 2
+  if (UVWert < 65)      // Wenn der Sensorwert kleiner als 65 ist...
+  {
+    UV_Bereich=1;
+    return UV_Bereich;
+  }
+  
+
+  //2. Katergorie: Index 3 bis 5
+  if (UVWert < 124 && UVWert > 65 )
+  {
+    UV_Bereich=2;
+    return UV_Bereich;
+  }
+  
+
+  //3. Katergorie: Index 6 bis 8
+  if (UVWert < 180 && UVWert > 124 )
+  {
+    UV_Bereich=3;
+    return UV_Bereich;
+  }
+  
+
+  //4. Katergorie: Index 9 bis 10
+  if (UVWert < 221 && UVWert > 180 )
+  {
+    UV_Bereich=4;
+    return UV_Bereich;
+  }
+  
+  //5. Katergorie: Index 11 und höher
+  if (UVWert > 221 )
+  {
+    UV_Bereich=5;
+    return UV_Bereich;
+  }
 }
