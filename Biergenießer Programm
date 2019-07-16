@@ -5,13 +5,87 @@ int RECV_PIN = 31;
 IRrecv irrecv(RECV_PIN); 
 decode_results results; 
 LiquidCrystal lcd(30,36,42,44,45,43); 
+
+//Feuchtigkeitssensor
+#include "DHT.h" 
+#include <DHT.h>
+#define DHTPIN 2     // what digital pin we're connected to 
+#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321 
+ 
+// Connect pin 1 (on the left) of the sensor to +5V 
+// NOTE: If using a board with 3.3V logic like an Arduino Due connect pin 1 
+// to 3.3V instead of 5V! 
+// Connect pin 2 of the sensor to whatever your DHTPIN is 
+// Connect pin 4 (on the right) of the sensor to GROUND 
+// Connect a 10K resistor from pin 2 (data) to pin 1 (power) of the sensor 
+ 
+ 
+DHT dht(DHTPIN, DHTTYPE); 
+
+//LED-Variablen
+int GRUEN=7;
+int GELB=5;
+int ROT=6;
+
+//Bibliothek für das SD-Kartenmodul
+#include <SD.h>
+File myFile;
+int pinCS = 53; // Pin 10 on Arduino Uno
+//PIN Belegung SD-Kartenmodul:
+//MOSI=51
+//MISO=50
+//SCK=52
+//CS=53
+
+//Bibliothek für Die Uhr
+//#include <DS3231.h> veraltet Bibliothek
+#include <DS1307RTC.h>
+#include <Time.h>
+#include <TimeLib.h>
+//DS3231  rtc(SDA, SCL) veraltet
+//PIN Belegung DS3231 Modul:
+//SDA= PIN 20
+//SCL= PIN 21
+
+int Minute;
+
+bool LED_Gruen(float);              //Ausgelagerte Grenzen für die Ansteurung der LEDS
+bool LED_Gelb(float);
+bool LED_Rot(float);
+
  
 void setup()  
 { 
   Serial.begin(9600); 
   lcd.begin(16,2); 
   irrecv.enableIRIn();                                    //Reciever starten 
-  
+
+  dht.begin();                                            //Feuchtigkeitssensor starten
+
+  pinMode(GRUEN,OUTPUT);                                  //Grüne LED  
+  pinMode(GELB,OUTPUT);                                   //Gelbe LED
+  pinMode(ROT,OUTPUT);                                    //Rote LED
+
+  pinMode(pinCS, OUTPUT);                                 // SD-Karte Ausgang
+   if (SD.begin())                                        // SD-Karte Statusmeldung
+  {
+    Serial.println("SD card is ready to use.");
+  } else
+  {
+    Serial.println("SD card initialization failed");
+    return;
+  }
+
+  setSyncProvider(RTC.get);
+  setTime(12,59,00,25,06,2019);                           //Zeit einstellen
+
+  /*rtc.begin();               //Zeit starten             //Zeit einstellungen veraltet
+  rtc.setDOW(SATURDAY);     //Wochentag einstellen
+  rtc.setTime(15, 15, 0);     //Uhrzeit einstellen
+  rtc.setDate(21, 6, 2019);     //Datum einstellen
+ */ 
+
+ Minute=0;
  
 } 
  
@@ -157,8 +231,70 @@ void loop()
        
         while(results.value != 16761405)                  //Schleife des Programms bis zu manuellen Beendigung mit der "Play"-Taste 
           { 
-            lcd.setCursor(0,0); 
-            lcd.print("Kampfstachel");                       //Programmplatzhalter 
+          
+          
+          float h = dht.readHumidity();                   //Liest die Luftfeuchtigkeit aus und speichert sie in der Variable h ab  
+
+          if(minute() == (Minute+10 %60)  )               // Zeitintervall zum Abspeichern in diesem Fall alle 10 Minuten    
+          {
+            Minute = minute();
+            myFile = SD.open("Messwert.txt", FILE_WRITE);  //Abspeichern der Messwerte
+            if (myFile) 
+            {  
+            myFile.print(rtc.getTimeStr());       //Zeitstempel
+            myFile.print(",");       
+            myFile.print("Luftfeuchtigkeit: ");
+            myFile.print(h);
+            myFile.println("%");
+            myFile.close(); // close the file
+            }
+          }
+          
+             
+          if (isnan(h))                                    // Checkt ob irgendwelche Fehler beim auslesen des Sensor gibt  und bricht das Programm früher ab
+          { 
+            Serial.println("Fehler beim auslesen des Sensors!"); 
+            return; 
+          } 
+
+          lcd.setCursor(0, 0);                            //Startposition der Darstellung auf dem LCD festlegen. lcd.setCursor(0,0) bedeutet: Erstes Zeichen in der ersten Zeile. 
+          lcd.print("Luftfeuchtigkeit:");  
+          lcd.setCursor(0, 1);                            // lcd.setCursor(0,1) bedeutet: Erstes Zeichen in der zweiten Zeile. 
+          lcd.print(h);
+          lcd.print("%"); 
+          
+          Serial.print("Luftfeuchtigkeit: "); 
+          Serial.print(h); 
+          Serial.print(" %\t"); 
+
+          if(LED_Gruen(h)==1)      
+          {
+            analogWrite(GRUEN,255);
+          }
+          if(LED_Gruen(h)==0)   
+          {
+            analogWrite(GRUEN,0);
+          }
+
+          if(LED_Gelb(h)==1)
+          {
+            analogWrite(GELB,255);
+          }
+          if(LED_Gelb(h)==0)
+          {
+            analogWrite(GELB,0);
+          }
+
+          if(LED_Rot(h)==1)
+          {
+            analogWrite(ROT,255);
+            
+          }
+          if(LED_Rot(h)==0)
+          {
+            analogWrite(ROT,0);
+          }
+
                
               if (irrecv.decode(&results))  
                 { 
@@ -221,3 +357,34 @@ void loop()
   } 
   
 }
+
+//Ausgelagerte Funktionen für die Ansteurung der LED(Wertebereich)
+bool LED_Gruen(float h)
+{
+  if(h>40 and h<60)
+  {
+    return 1;
+  }
+  else{return 0;}
+  
+}
+
+bool LED_Gelb(float h)
+{
+  if(h>=60 and h<80)
+  {
+    return 1;
+  }
+  else{return 0;}
+}
+
+bool LED_Rot(float h)
+{
+  if(h>=80)
+  {
+    return 1;
+  }
+  else{return 0;}
+}
+
+
