@@ -22,6 +22,17 @@ int t = 5000;                         // Intervall „t“ in Millisekunden zwis
 int funktion_temperatur (int);
 int temperaturbereich;  
 
+LiquidCrystal lcd(30,36,42,44,45,43);
+
+// Variablen zur Windgeschwindigkeitsmessung
+
+//int sensor = A3;                                          // Sensor ist am analogen Pin A3 angeschlossen.
+float windgeschwindigkeit = 0.0;                  // Speicherung der Windgeschwindigkeit unter der Variablen "windgeschwindigkeit".
+int t = 5000;                                                  // Messzeit „t“ in Millisekunden.
+int umdrehungen = 0;
+float pi = 3.1416;
+float d = 0.2;                                                // Durchmesser des verwendeten Windrads (Anemometer) d = 0,2 m.
+ 
 void setup()  
 { 
   Serial.begin(9600); 
@@ -176,9 +187,68 @@ void loop()
        
         while(results.value != 16761405)                  //Schleife des Programms bis zu manuellen Beendigung mit der "Play"-Taste 
           { 
-            lcd.setCursor(0,0); 
-            lcd.print("Prinzessin2");                        //Programmplatzhalter 
-             
+            messung_windgeschwindigkeit();                              // Aufrufen der Funktion zur Messung der Windgeschwindigkeit.
+            lcd.clear();                                                                  // Löschen des Displays.   
+            lcd.setCursor(0, 0);
+            lcd.print(float(windgeschwindigkeit));                       // Ausgabe der Windgeschwindigkeit auf dem Display.
+            lcd.print(" km/h");                                                      // Hinter der Windgeschwindigkeit wird die Einheit "km/h" eingeblendet.
+            lcd.setCursor(0, 1);
+
+              if (windgeschwindigkeit <= 1) {                                                                                 // Ausgabe von "Windstille" auf dem Display, wenn die Windgeschwindigekit kleiner/ gleich 1 km/h ist.
+                lcd.print("Windstille"); 
+                }
+            
+              else if (1 < windgeschwindigkeit && windgeschwindigkeit <= 5) {                         // Ausgabe von "leiser Zug" auf dem Display, wenn die Windgeschwindigkeit zwischen 1 km/h und 5 km/h liegt.
+                lcd.print("leiser Zug");                                                                                              // (groeßer als 1 km/h und kleiner/ gleich 5 km/h)
+                } 
+
+              else if (5 < windgeschwindigkeit && windgeschwindigkeit <= 11) {                        // Ausgabe von "leichte Brise" auf dem Display, wenn die Windgeschwindigkeit zwischen 5 km/h und 11 km/h liegt.
+                lcd.print("leichte Brise");                                                                                           // (groeßer als 5 km/h und kleiner/ gleich 11 km/h)
+                }
+
+              else if (11 < windgeschwindigkeit && windgeschwindigkeit <= 19) {                      // Ausgabe von "schwache Brise" auf dem Display, wenn die Windgeschwindigkeit zwischen 11 km/h und 19 km/h liegt.
+                lcd.print("schwache Brise");                                                                                      // (groeßer als 11 km/h und kleiner/ gleich 19 km/h)
+                }
+
+              else if (19 < windgeschwindigkeit && windgeschwindigkeit <= 28) {                     // Ausgabe von "maessige Brise" auf dem Display, wenn die Windgeschwindigkeit zwischen 19 km/h und 28 km/h liegt.
+                lcd.print("maessige Brise");                                                                                      // (groeßer als 19 km/h und kleiner/ gleich 28 km/h)
+                }
+
+              else if (28 < windgeschwindigkeit && windgeschwindigkeit <= 38) {                      // Ausgabe von "frische Brise" auf dem Display, wenn die Windgeschwindigkeit zwischen 28 km/h und 38 km/h liegt.
+                lcd.print("frische Brise");                                                                                           // (groeßer als 28 km/h und kleiner/ gleich 38 km/h)
+                } 
+
+              else if (38 < windgeschwindigkeit && windgeschwindigkeit <= 49) {                     // Ausgabe von "starker Wind" auf dem Display, wenn die Windgeschwindigkeit zwischen 38 km/h und 48 km/h liegt.
+                lcd.print("starker Wind");                                                                                         // (groeßer als 38 km/h und kleiner/ gleich 49 km/h)
+                }
+
+              else if (49 < windgeschwindigkeit && windgeschwindigkeit <= 61) {                     // Ausgabe von "steifer Wind" auf dem Display, wenn die Windgeschwindigkeit zwischen 49 km/h und 61 km/h liegt.
+                lcd.print("steifer Wind");                                                                                          // (groeßer als 49 km/h und kleiner/ gleich 61 km/h)
+                }
+
+              else if (61 < windgeschwindigkeit && windgeschwindigkeit <= 74) {                     // Ausgabe von "stuermisch" auf dem Display, wenn die Windgeschwindigkeit zwischen 61 km/h und 74 km/h liegt.
+                lcd.print("stuermisch");                                                                                            // (groeßer als 61 km/h und kleiner/ gleich 74 km/h)
+                }
+
+              else if (74 < windgeschwindigkeit && windgeschwindigkeit <= 88) {                     // Ausgabe von "Sturm" auf dem Display, wenn die Windgeschwindigkeit zwischen 74 km/h und 88 km/h liegt.
+                lcd.print("Sturm");                                                                                                   // (groeßer als 74 km/h und kleiner/ gleich 88 km/h)
+                }
+
+              else if (88 < windgeschwindigkeit && windgeschwindigkeit <= 102) {                   // Ausgabe von "schwerer Sturm" auf dem Display, wenn die Windgeschwindigkeit zwischen 88 km/h und 102 km/h liegt.
+                lcd.print("schwerer Sturm");                                                                                    // (groeßer als 88 km/h und kleiner/ gleich 102 km/h)
+                }
+
+              else if (102 < windgeschwindigkeit && windgeschwindigkeit <= 117) {                 // Ausgabe von "orkanartig" auf dem Display, wenn die Windgeschwindigkeit zwischen 102 km/h und 117 km/h liegt.
+                lcd.print("orkanartig");                                                                                            // (groeßer als 102 km/h und kleiner/ gleich 117 km/h)
+                }
+
+              else {                                                                                                                         // Ausgabe von "Orkan" auf dem Display, wenn die Windgeschwindigkeit groeßer als 117 km/h ist.
+                lcd.print("Orkan"); 
+                }
+
+            delay(t);
+
+           
                if (irrecv.decode(&results))  
                  { 
                   Serial.println(results.value, DEC);     //Ausgabe des Wertes als DEC-Zahl auf dem seriellen Monitor 
@@ -379,6 +449,21 @@ switch (UV_Bereich)
     } 
   } 
   
+}
+
+void zaehlung_umdrehungen()                                                       // Funktion zum Zaehlen der Umdrehungen.
+{
+umdrehungen++;                                                                           // Hochzaehlen der Anzahl der Umdrehungen.
+}
+
+
+void messung_windgeschwindigkeit()                                                                          // Funktion zu Messung der Windgeschwindigkeit
+{
+umdrehungen = 0;
+attachInterrupt(digitalPinToInterrupt(3), zaehlung_umdrehungen, RISING);               // Diese Funktion bewirkt, dass die Umdrehung gezaehlt werden kann. Dabei ist der erste Parameter der angesteuerte Sensor (A3), der zweite Parameter die Funktion, die weiterverarbeitet wird und der dritte Parameter der Modus (Ansteuerung des zweiten Parameters, wenn der Pin von LOW auf HIGH wechselt).
+delayMicroseconds(t);
+detachInterrupt(digitalPinToInterrupt(3));                                                                    // Deaktivierung des Interrupts.
+windgeschwindigkeit = (int)umdrehungen * (float)pi * (float)d / (int)t * 3600;           // Formel zur Berechnung der Windgeschwindigkeit in der Einheit km/h.
 }
 
 int fun_photoresistor(int sensorWert) //Die Funktion unterteilt die Sensorwerte des Photowiderstandes (Eingabewert)in Kategorien von 1-5. Im Anschluss wird der Helligkeits_Bereich wieder zurück gegeben(Rückgabewert)
