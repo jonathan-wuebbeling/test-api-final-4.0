@@ -86,9 +86,8 @@ void loop()
       lcd.clear();                                        //Eingabeaufforderung auf dem Display löschen 
        
         while(results.value != 16761405)                  //Schleife des Programms bis zu manuellen Beendigung mit der "Play"-Taste 
-          { 
-            lcd.setCursor(0,0); 
-            lcd.print("Thores Pro");                      //Programmplatzhalter 
+          {  
+            proLuftdruck();
              
               if (irrecv.decode(&results))                //Eingabe zum Beenden am Ende des Programms 
                 { 
@@ -220,4 +219,27 @@ void loop()
     } 
   } 
   
+}
+
+
+
+void proLuftdruck(){                                       //Programm Luftdruck, Zur Übersicht des Menü-Quellcodes als eine Funktion
+  Serial.print("Pressure = ");
+            Serial.print(bmp.readPressure());
+            Serial.println(" Pa");
+            lcd.clear();                            
+            lcd.setCursor(0, 0);
+            lcd.print("Druck: ");
+            lcd.print(bmp.readPressure());                 //printen des Sensorwertes auf das Display
+            lcd.setCursor(0, 1);
+            if (/*pressureStamp*/bmp.readPressure() < 980){
+              lcd.print("Schietwetter");
+            }
+            else if (/*pressureStamp*/bmp.readPressure() >= 980 && /*pressureStamp*/bmp.readPressure() <= 1020){
+              lcd.print("veraenderlich");
+            }
+            else if (/*pressureStamp*/ bmp.readPressure()> 1020){
+              lcd.print("geiles Wetter");
+            }
+            delay(500);
 }
