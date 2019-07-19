@@ -12,6 +12,15 @@ int Helligkeits_Bereich = 0;  //wird im späteren Verlauf für die ausgelagerte 
 int UV_Bereich = 0;           //wird im späteren Verlauf für die ausgelagerte Funktion benutzt
 int UVWert = 85; //auf 85 gesetzt um zu zeigen, dass ein wert auf dem Display zu sehen ist
 
+// Variablen zur Temperaturmessung
+
+
+int sensor = A2;                    // Sensor ist am analogen Pin A2 angeschlossen.
+int sensorwert;
+int temperatur = 0;              // Speicherung des Temperaturwertes unter der Variablen "temperatur".
+int t = 5000;                         // Intervall „t“ in Millisekunden zwischen den einzelnen Messungen.
+int funktion_temperatur (int);
+int temperaturbereich;  
 
 void setup()  
 { 
@@ -109,9 +118,49 @@ void loop()
        
         while(results.value != 16761405)                  //Schleife des Programms bis zu manuellen Beendigung mit der "Play"-Taste 
           { 
-            lcd.setCursor(0,0); 
-            lcd.print("Prinzessin");                      //Programmplatzhalter 
-             
+              sensorwert = analogRead(sensor);                               // Auslesen des Sensorwertes.
+              temperatur= map(sensorwert, 0, 410, -50, 150);          // Umwandeln des Sensorwertes in die Temperatur. Dazu: 0 = -50°C, 410 = 150°C
+              delay(t);
+              lcd.clear();                                                                     // Löschen des Displays.                                               
+              lcd.setCursor(0, 0);
+              lcd.print(int(temperatur));                                            // Ausgabe der Temperatur auf dem Display.
+              lcd.print((char)223);                                                     // Ausgabe des "°"-Zeichens.
+              lcd.print("C");
+              lcd.setCursor(0, 1);
+
+              switch (funktion_temperatur (temperatur)) {
+  
+                case 1: {
+                  lcd.print("sehr dick");                              // Ausgabe von "sehr dick" auf dem Display, wenn die Temperatur kleiner/ gleich -1°C ist.
+                  break;
+                  } 
+
+                case 2: {
+                  lcd.print("dick");                                     // Ausgabe von "dick" auf dem Display, wenn die Temperatur zwischen -1°C und 9°C liegt.
+                  break;                                                     // (groeßer als -1°C und kleiner/ gleich 9°C)
+                  } 
+
+                case 3: {
+                  lcd.print("langer Uebergang");              // Ausgabe von "langer Uebergang" auf dem Display, wenn die Temperatur zwischen 9°C und 17°C liegt.
+                  break;                                                    // (groeßer als 9°C und kleiner/ gleich 17°C)
+                  
+
+                case 4: {
+                  lcd.print("kurzer Uebergang");              // Ausgabe von "kurzer Uebergang" auf dem Display, wenn die Temperatur zwischen 17°C und 23°C liegt.
+                  break;                                                    // (groeßer als 17°C und kleiner/ gleich 23°C)
+                  }
+
+                case 5: {
+                  lcd.print("kurz");                                   // Ausgabe von "kurz" auf dem Display, wenn die Temperatur zwischen 23°C und 32°C liegt.
+                  break;                                                   // (groeßer als 23°C und kleiner/ gleich 32°C)
+                  }
+
+                case 6: {
+                  lcd.print("sehr kurz");                           // Ausgabe von "sehr kurz" auf dem Display, wenn die Temperatur groeßer als 32°C ist.
+                  break;
+                  }  
+                }
+
               if (irrecv.decode(&results)) 
                 { 
                   Serial.println(results.value, DEC);     //Ausgabe des Wertes als DEC-Zahl auf dem seriellen Monitor 
@@ -405,3 +454,36 @@ int fun_uv(int UVWert)
     return UV_Bereich;
   }
 }
+
+int funktion_temperatur (int temperatur){                // Funktion zur Bestimmung des Temperaturbereiches (ausgelagerte Funktion mit Rueckgabewert).
+
+  if (temperatur <= -1) { 
+    temperatur_bereich = 1;
+    return temperatur_bereich; 
+  }
+ 
+  else if (-1 < temperatur && temperatur <= 9) {
+    temperatur_bereich = 2;
+    return temperatur_bereich;
+  }
+
+  else if (9 < temperatur && temperatur <= 17) {
+    temperatur_bereich = 3;
+    return temperatur_bereich;
+  }
+
+  else if (17 < temperatur && temperatur <= 23) {
+    temperatur_bereich = 4;
+    return temperatur_bereich;
+  }
+
+  else if (23 < temperatur && temperatur <= 32) {
+    temperatur_bereich = 5;
+    return temperatur_bereich;
+  }
+
+  else {
+    temperatur_bereich = 6;
+    return temperatur_bereich;  
+  }
+}                                                      
